@@ -3,7 +3,8 @@ const cors = require('cors');
 const multer = require("multer");
 require('dotenv').config();
 const PORT = process.env.PORT;
-
+const os = require('os');
+const path = require('path');
 
 const app = express();
 // console.log(process.env.PORT);
@@ -11,6 +12,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+app.use(cors());
 
 app.get('/',(req,res) => {
    
@@ -22,41 +24,43 @@ app.get('/',(req,res) => {
 });
 
 
+
+
+// console.log(path.join(__dirname,'uploads'))
+
 const storage = multer.diskStorage({
-   destination:function (req,file,cb){
-      cb(null,"./uploads");
+   destination: function (req, file, cb) {
+      const tempDir = path.join(__dirname, 'uploads');
+      cb(null, tempDir);
    },
-   filename:function(req,file,cb){
-      cb(null,file.originalname);
+   filename: function (req, file, cb) {
+      cb(null, file.originalname);
    }
 });
 
-const uploads = multer({storage:storage});
+const upload = multer({ storage: storage });
 
-app.post('/',uploads.single('image'),async(req,res) => {
-   try{
+app.post('/', upload.single('image'), async (req, res) => {
+   try {
       const image = req.file;
       console.log(image);
-      if(!image){
+      if (!image) {
          return res.status(500).json({
-            message:"File upload is not successfull",
-            success:false,
+            message: "File upload is not successful",
+            success: false,
          });
-   
-      };
-      
+      }
+
       res.status(200).json({
-         message:"Success true",
-      })
-   }
-   catch(error){
+         message: "Success true",
+      });
+   } catch (error) {
       res.status(500).json({
-         error:error,
-         message:"Not Upload"
-      })
+         error: error.message,
+         message: "Not Upload"
+      });
    }
-   
-})
+});
 
 // app.get("/image/:id",(req,res) => {
 //    res.sendFile('')
