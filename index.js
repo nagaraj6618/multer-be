@@ -34,20 +34,32 @@ const storage = multer.diskStorage({
 const uploads = multer({storage:storage});
 
 app.post('/',uploads.single('image'),async(req,res) => {
-
-   const image = req.file;
-   console.log(image);
-   if(!image){
-      return res.status(500).json({
-         message:"File upload is not successfull",
-         success:false,
-      });
-
-   };
+   try{
+      const image = req.file;
+      console.log(image);
+      if(!image){
+         return res.status(500).json({
+            message:"File upload is not successfull",
+            success:false,
+         });
    
-   res.status(200).json({
-      message:"Success true",
-   })
+      };
+      
+      res.status(200).json({
+         message:"Success true",
+      })
+   }
+   catch(error){
+      res.status(500).json({
+         error:error,
+         message:"Not Upload"
+      })
+   }
+   
 })
+
+// app.get("/image/:id",(req,res) => {
+//    res.sendFile('')
+// })
 
 app.listen(PORT,()=>console.log(`http://localhost:${PORT}`));
