@@ -44,7 +44,7 @@ app.post('/',uploads.single('image'),async(req,res) => {
       });
 
    };
-   console.log(image);
+   
    res.status(200).json({
       message:"Success true",
    })
